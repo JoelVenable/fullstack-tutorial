@@ -2,9 +2,24 @@ const { gql } = require('apollo-server');
 
 const typeDefs = gql`
 type Query {
-  launches: [Launch]!
+  launches(
+    """
+    The number of results to show.  Must be >= 1.  Default = 20
+    """
+    pageSize: Int
+    """
+    If you add a cursor here, it will only return results _after_ this cursor.
+    """
+    after: String
+  ): LaunchConnection
   launch(id: ID!): Launch
   me: User
+}
+
+type LaunchConnection {
+  cursor: String!
+  hasMore: Boolean!
+  launches: [Launch]!
 }
 
 type Launch {
@@ -29,7 +44,7 @@ type User {
 
 type Mission {
   name: String
-  missionPatch(size: PatchSize): String
+  missionPatch(mission: String, size: PatchSize): String
 }
 
 enum PatchSize {
